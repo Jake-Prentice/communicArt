@@ -3,7 +3,7 @@
     "workspaces": ["packages/*"],
     "scripts": {
         "client": "yarn workspace client start",
-        "server": "yarn workspace server dev",
+        "server": "yarn workspace @communicArt/server dev",
         "server:test-global": "lt --port 5000",
         "client:test-global": "lt --port 3000"
     }
