@@ -1,7 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
-import { getChats } from "api/chats";
+import { getChatMessagesById, getChats } from "api/chats";
 import {IChatSchema, IMessageSchema, ISendMessageRes} from "@communicArt/common/src/types/schemas";
-import useLocalStorage from 'hooks/useLocalStorage';
 import useSessionStorage from 'hooks/useSessionStorage';
 
 const ChatContext = React.createContext<IValue | undefined>(undefined);
@@ -23,8 +22,10 @@ export interface ICurrentChat {
 interface IValue {
     chats: IChats;
     setChats: React.Dispatch<React.SetStateAction<IChats>>;
+    clearChats: () => void;
     currentChat: ICurrentChat;
     setCurrentChat: React.Dispatch<React.SetStateAction<ICurrentChat>>;
+    clearCurrentChat: () => void;
     isDrawCanvasOpen: boolean;
     setIsDrawCanvasOpen: React.Dispatch<React.SetStateAction<boolean>>;
     sendImageMesssage: ({ image, userId}: { image: string, userId: string}) => void;
@@ -33,10 +34,11 @@ interface IValue {
 
 export function ChatProvider({socket, children}: React.PropsWithChildren<{socket: SocketIOClient.Socket}>) { 
 
-    const [chats, setChats] = useSessionStorage<IChats>("chats", []);
-    const [currentChat, setCurrentChat] = useSessionStorage<ICurrentChat>("currentChat");
+    const [chats, setChats, clearChats] = useSessionStorage<IChats>("chats", []);
+    const [currentChat, setCurrentChat, clearCurrentChat] = useSessionStorage<ICurrentChat>("currentChat");
     const [isDrawCanvasOpen, setIsDrawCanvasOpen] = useState(false);
 
+    console.log("type", typeof clearChats)
     //get chats
     useEffect(() => {
         if (chats.length !== 0) return;
@@ -52,12 +54,29 @@ export function ChatProvider({socket, children}: React.PropsWithChildren<{socket
         })();
     }, [])
 
+
+    //get messages for current chat
+    useEffect(() => {
+        console.log("get messages for current chat")
+        if (!currentChat?.id) return;
+        (async() => {
+            try {
+                const res = await getChatMessagesById(currentChat.id);
+                if (res.data) setCurrentChat(prev => {
+                    return {id: prev.id, messages: res.data}
+                });
+            }catch(err) {}
+        })();
+    }, [currentChat?.id])
+
+
     const addMessageToCurrentChat = useCallback((data: IMessage) => {
         setCurrentChat(prev => {
             return {...prev, messages: [...prev.messages, data]}
         })
     }, [setCurrentChat]);
 
+    
     //on new message
     useEffect(() => {
         if (!socket) return;
@@ -97,8 +116,10 @@ export function ChatProvider({socket, children}: React.PropsWithChildren<{socket
     const value = {
         chats,
         setChats,
+        clearChats,
         currentChat,
         setCurrentChat,
+        clearCurrentChat,
         setIsDrawCanvasOpen,
         isDrawCanvasOpen,
         sendImageMesssage

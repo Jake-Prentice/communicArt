@@ -1,11 +1,10 @@
+import {PREFIX} from "constants/index";
 import { useEffect, useState } from 'react'
-
-export const PREFIX = 'communicArt-'
 
 function useLocalStorage<T>(
     key: string, 
     initialValue?: T
-): [T, React.Dispatch<React.SetStateAction<T>>] {
+): [T, React.Dispatch<React.SetStateAction<T>>, () => void] {
 
   const prefixedKey = PREFIX + key
   const [value, setValue] = useState<T>(() => {
@@ -21,11 +20,13 @@ function useLocalStorage<T>(
     }
   })
 
+  const clearValue = () => sessionStorage.removeItem(PREFIX + key);
+
   useEffect(() => {
     if (value) localStorage.setItem(prefixedKey, JSON.stringify(value));
   }, [prefixedKey, value, initialValue])
 
-  return [value, setValue]
+  return [value, setValue, clearValue]
 }
 
 export default useLocalStorage;

@@ -21,20 +21,6 @@ const CurrentChat = () => {
     const user = useUser();
     const chats = useChats()!;
     const bottomRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => { 
-
-        (async() => {
-            try {
-                const res = await getChatMessagesById(chats.currentChat.id);
-                if (res.data) chats?.setCurrentChat(prev => {
-                    return {id: prev.id, messages: res.data}
-                });
-            }catch(err) {}
-        })();
-
-    }, [chats.currentChat.id])
-
     
     useEffect(() => {
         bottomRef?.current?.scrollIntoView({behavior: "smooth"})

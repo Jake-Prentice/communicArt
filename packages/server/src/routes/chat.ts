@@ -33,6 +33,7 @@ router.get("/:chatId", isAuth, async (req,res,next) => {
     try {
         const chat = await Chat.findById(req.params.chatId);
         if (!chat) throw new ErrorHandler(500, "chatId not found!");
+        
         const limitedMessages = chat.messages.slice(-10);
         res.json(limitedMessages).status(200);
     }catch(err) {next(err)}

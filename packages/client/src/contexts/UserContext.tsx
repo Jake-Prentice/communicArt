@@ -1,7 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react'
-import useLocalStorage, { PREFIX } from "hooks/useLocalStorage";
+import useLocalStorage from "hooks/useLocalStorage";
 import axios from "axiosBase";
 import {AxiosRequestConfig } from "axios";
+import { useChats } from './ChatContext';
+import { PREFIX } from 'constants/';
+import removeAllStored from 'utils/removeAllStored';
 
 interface IProps {
 
@@ -39,7 +42,7 @@ export const UserProvider = ({children}: React.PropsWithChildren<IProps>) => {
     const [accessToken, setAccessToken] = useLocalStorage<string>("accessToken");
     const [isAuth, setIsAuth] = useState(!!accessToken);
     const [error, setError] = useState("");
-
+    
     useEffect(() => {
         if (!accessToken) {
             setError(ERRORS.AUTH);
@@ -81,8 +84,8 @@ export const UserProvider = ({children}: React.PropsWithChildren<IProps>) => {
     }
 
     const logout = () => {
-        console.log("loggin out");
-        localStorage.removeItem(PREFIX + "accessToken");
+        removeAllStored(localStorage)
+        removeAllStored(sessionStorage)
         setIsAuth(false);
     }
 

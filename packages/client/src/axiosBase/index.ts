@@ -1,5 +1,5 @@
 import axios from "axios";
-import {PREFIX} from "hooks/useLocalStorage";
+import {PREFIX} from "constants/index";
 
 const isLocalTunnel = false;
 
