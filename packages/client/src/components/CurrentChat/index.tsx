@@ -16,7 +16,7 @@ import NewImageMessage from 'components/NewImageMessage';
 import { useChats } from 'contexts/ChatContext';
 import { Margin } from 'components/shared/spacing';
 import CreateNewChatModal from 'components/CreateNewChatModal';
-import { RouteComponentProps} from 'react-router';
+import { RouteComponentProps, Route, useHistory} from 'react-router';
 
 
 const CurrentChat = ({match}: RouteComponentProps<{id: string}, any, {} | any>) => {
@@ -25,6 +25,8 @@ const CurrentChat = ({match}: RouteComponentProps<{id: string}, any, {} | any>) 
     const chats = useChats()!;
     const bottomRef = useRef<HTMLDivElement>(null);
     const [chatSettingsIsOpen, setChatSettingsIsOpen] = useState(false);
+
+    const history = useHistory();
 
     //chat id in url params => chats/1234
     useEffect(() => {   
@@ -42,7 +44,7 @@ const CurrentChat = ({match}: RouteComponentProps<{id: string}, any, {} | any>) 
     return (
         <>
             <Wrapper>
-                <SettingsWrapperButton onClick={() => setChatSettingsIsOpen(true)}>
+                <SettingsWrapperButton to={location => `${location.pathname}/settings`}>
                     <faSolid.Cog size={"1.2rem"} />
                 </SettingsWrapperButton>
                 <Messages>
@@ -65,7 +67,9 @@ const CurrentChat = ({match}: RouteComponentProps<{id: string}, any, {} | any>) 
                 </Footer>
             </Wrapper>
             {chats.isDrawCanvasOpen && <NewImageMessage />}
-            {chatSettingsIsOpen && <CreateNewChatModal />}
+            {/* {chatSettingsIsOpen && <CreateNewChatModal />} */}
+            <Route path={"/chats/:id/settings"} component={!chats.isLoading && CreateNewChatModal}/>
+
         </>
     )
 }

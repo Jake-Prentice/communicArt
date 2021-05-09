@@ -1,6 +1,6 @@
 import React from "react";
-import {Link} from "react-router-dom";
-import styled from "styled-components";
+import {Link, LinkProps} from "react-router-dom";
+import styled, {StyledComponentProps} from "styled-components";
 
 const StyledButton = styled.button`
     border: none;
@@ -13,14 +13,18 @@ const StyledButton = styled.button`
     }
 `
 
-interface IDefaultProps {
-    children: React.ReactChildren;
-    to?: string;
+type TDefaultProps = {
     disabled?: boolean;
     isLoading?: boolean;
-}
+} 
+    & React.HTMLProps<HTMLButtonElement>
+    & Partial<LinkProps>;
 
-export function handleLinkWrapping(Component: React.ComponentType<any>, props: IDefaultProps)  {
+
+export function handleLinkWrapping(
+    Component: React.ComponentType<any>, 
+    props: React.PropsWithChildren<TDefaultProps>
+)  {
     const {children, to, disabled, isLoading, ...rest} = props 
     
     const button = (
@@ -35,5 +39,5 @@ export function handleLinkWrapping(Component: React.ComponentType<any>, props: I
 
 }
 
-const Button = (props: React.PropsWithChildren<any>) => handleLinkWrapping(StyledButton, props);
+const Button = (props: React.PropsWithChildren<TDefaultProps>) => handleLinkWrapping(StyledButton, props);
 export default Button;

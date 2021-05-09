@@ -15,7 +15,7 @@ export const Wrapper = styled.div`
     }
 `
 
-export const ChatItem = styled(Button)`
+export const ChatItem = styled(Button)<{isSelected: boolean;}>`
     padding: 1rem 0.5rem;
     background: white;
     ${props => props.isSelected && css`
@@ -51,4 +51,5 @@ export const CreateNewChatButton = styled(Button)`
     align-items: center;
     background: #D81E5B;
     color: white;
+    width: 100%;
 `
