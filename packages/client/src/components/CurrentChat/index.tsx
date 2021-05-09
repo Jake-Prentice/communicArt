@@ -26,6 +26,7 @@ const CurrentChat = ({match}: RouteComponentProps<{id: string}, any, {} | any>) 
     const bottomRef = useRef<HTMLDivElement>(null);
     const [chatSettingsIsOpen, setChatSettingsIsOpen] = useState(false);
 
+    //chat id in url params => chats/1234
     useEffect(() => {   
         chats.setCurrentChatId(match.params.id);
     }, [match.params.id])
