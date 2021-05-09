@@ -1,7 +1,7 @@
 import React from 'react'
 import { Wrapper } from './style';
 
-const CreateNewChatModal = () => {
+const ChatSettingsModal = () => {
     return (
         <Wrapper>
             create new chat
@@ -9,4 +9,4 @@ const CreateNewChatModal = () => {
     )
 }
 
-export default CreateNewChatModal;
+export default ChatSettingsModal;

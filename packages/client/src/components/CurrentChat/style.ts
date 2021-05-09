@@ -1,4 +1,3 @@
-import { Pallet } from "@styled-icons/fa-solid";
 import Button from "components/shared/Button";
 import styled from "styled-components";
 
