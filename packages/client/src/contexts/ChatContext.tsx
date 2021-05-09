@@ -2,6 +2,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { getChatMessagesById, getChats } from "api/chats";
 import {IChatSchema, IMessageSchema, ISendMessageRes} from "@communicArt/common/src/types/schemas";
 import useSessionStorage from 'hooks/useSessionStorage';
+import {useHistory} from "react-router-dom";
 
 const ChatContext = React.createContext<IValue | undefined>(undefined);
 
@@ -10,24 +11,27 @@ export function useChats() {
 }
 
 
+
 //should I do this, idk?
 type IChats = ( Pick<IChatSchema, "name" | "_id"> & {numOfNewMessages: number})[];
 type IMessage = Pick<IMessageSchema, "from" | "image">;
 
-export interface ICurrentChat {
-    id: string;
-    messages: IMessage[];
-}
-
 interface IValue {
+
     chats: IChats;
     setChats: React.Dispatch<React.SetStateAction<IChats>>;
     clearChats: () => void;
-    currentChat: ICurrentChat;
-    setCurrentChat: React.Dispatch<React.SetStateAction<ICurrentChat>>;
-    clearCurrentChat: () => void;
+
+    currentChatId: string;
+    setCurrentChatId: React.Dispatch<React.SetStateAction<string>>;  
+
+    currentChatMessages: IMessage[];
+    setCurrentChatMessages: React.Dispatch<React.SetStateAction<IMessage[]>>;
+    clearCurrentChatMessages: () => void;
+    
     isDrawCanvasOpen: boolean;
     setIsDrawCanvasOpen: React.Dispatch<React.SetStateAction<boolean>>;
+
     sendImageMesssage: ({ image, userId}: { image: string, userId: string}) => void;
 }
 
@@ -35,10 +39,18 @@ interface IValue {
 export function ChatProvider({socket, children}: React.PropsWithChildren<{socket: SocketIOClient.Socket}>) { 
 
     const [chats, setChats, clearChats] = useSessionStorage<IChats>("chats", []);
-    const [currentChat, setCurrentChat, clearCurrentChat] = useSessionStorage<ICurrentChat>("currentChat");
     const [isDrawCanvasOpen, setIsDrawCanvasOpen] = useState(false);
+    
+    //current chat
+    const [currentChatId, setCurrentChatId] = useState("");
+    const [
+        currentChatMessages, 
+        setCurrentChatMessages, 
+        clearCurrentChatMessages
+    ] = useSessionStorage<IMessage[]>("current-chat-messages", []);
 
-    console.log("type", typeof clearChats)
+    const history = useHistory();
+
     //get chats
     useEffect(() => {
         if (chats.length !== 0) return;
@@ -57,24 +69,23 @@ export function ChatProvider({socket, children}: React.PropsWithChildren<{socket
 
     //get messages for current chat
     useEffect(() => {
-        console.log("get messages for current chat")
-        if (!currentChat?.id) return;
+        if (!currentChatId) return;
         (async() => {
             try {
-                const res = await getChatMessagesById(currentChat.id);
-                if (res.data) setCurrentChat(prev => {
-                    return {id: prev.id, messages: res.data}
-                });
-            }catch(err) {}
+                const res = await getChatMessagesById(currentChatId);
+                console.log({res})
+                if (res.data) setCurrentChatMessages(res.data);
+            }catch(err) {
+                //error - probably miss typed chatId
+                history.push("/chats")
+            }
         })();
-    }, [currentChat?.id])
+    }, [currentChatId])
 
 
     const addMessageToCurrentChat = useCallback((data: IMessage) => {
-        setCurrentChat(prev => {
-            return {...prev, messages: [...prev.messages, data]}
-        })
-    }, [setCurrentChat]);
+        setCurrentChatMessages(prev => [...prev, data])
+    }, [setCurrentChatMessages]);
 
     
     //on new message
@@ -87,7 +98,7 @@ export function ChatProvider({socket, children}: React.PropsWithChildren<{socket
                 return;
             }
 
-            if (newMessage.meta.chatId === currentChat?.id) {
+            if (newMessage.meta.chatId === currentChatId) {
                 addMessageToCurrentChat(newMessage.data);
                 return;
             } 
@@ -105,11 +116,11 @@ export function ChatProvider({socket, children}: React.PropsWithChildren<{socket
 
         return () => {socket.off("new-message")};
 
-    }, [socket, currentChat?.id, addMessageToCurrentChat, setChats])
+    }, [socket, currentChatId, addMessageToCurrentChat, setChats])
 
 
     const sendImageMesssage = ({image, userId}: {image: string, userId: string}) => {
-        socket.emit("send-message", {image, chatId: currentChat.id})
+        socket.emit("send-message", {image, chatId: currentChatId})
         addMessageToCurrentChat({from: userId, image})
     }
     
@@ -117,9 +128,11 @@ export function ChatProvider({socket, children}: React.PropsWithChildren<{socket
         chats,
         setChats,
         clearChats,
-        currentChat,
-        setCurrentChat,
-        clearCurrentChat,
+        currentChatId,
+        setCurrentChatId,
+        currentChatMessages,
+        setCurrentChatMessages,
+        clearCurrentChatMessages,
         setIsDrawCanvasOpen,
         isDrawCanvasOpen,
         sendImageMesssage

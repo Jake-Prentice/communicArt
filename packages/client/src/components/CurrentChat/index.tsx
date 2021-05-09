@@ -16,19 +16,23 @@ import NewImageMessage from 'components/NewImageMessage';
 import { useChats } from 'contexts/ChatContext';
 import { Margin } from 'components/shared/spacing';
 import CreateNewChatModal from 'components/CreateNewChatModal';
+import { RouteComponentProps} from 'react-router';
 
 
-const CurrentChat = () => {
+const CurrentChat = ({match}: RouteComponentProps<{id: string}, any, {} | any>) => {
     
     const user = useUser();
     const chats = useChats()!;
     const bottomRef = useRef<HTMLDivElement>(null);
     const [chatSettingsIsOpen, setChatSettingsIsOpen] = useState(false);
 
+    useEffect(() => {   
+        chats.setCurrentChatId(match.params.id);
+    }, [match.params.id])
     
     useEffect(() => {
         bottomRef?.current?.scrollIntoView({behavior: "smooth"})
-    }, [chats.currentChat.messages])
+    }, [chats.currentChatMessages])
 
     return (
         <>
@@ -37,7 +41,7 @@ const CurrentChat = () => {
                     <faSolid.Cog size={"1.2rem"} />
                 </SettingsWrapperButton>
                 <Messages>
-                {chats.currentChat.messages.map((message, index) => {
+                {chats.currentChatMessages.map((message, index) => {
                         const isFromMe = message.from === user.data.id;
                         return (
                             <MessageWrapper key={index} isFromMe={isFromMe} >

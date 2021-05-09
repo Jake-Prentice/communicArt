@@ -3,6 +3,7 @@ import ChatSideBar from "components/ChatsSidebar";
 import CurrentChat from "components/CurrentChat";
 import { useChats } from "contexts/ChatContext";
 import { ChatLayout, ChatsWrapper } from "./style";
+import {Route} from "react-router-dom";
 
 const Chats = () => {
     const chats = useChats();
@@ -10,7 +11,8 @@ const Chats = () => {
         <ChatLayout>
             <ChatsWrapper>
                 <ChatSideBar />
-                {chats?.currentChat && <CurrentChat />}
+                {/* {chats?.currentChat && <CurrentChat />} */}
+                <Route path={"/chats/:id"} component={CurrentChat}/>
             </ChatsWrapper>
         </ChatLayout>
     )

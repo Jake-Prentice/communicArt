@@ -14,7 +14,6 @@ router.get("/", isAuth, async (req,res,next) => {
             path: "chats",
             select: "name"
         })
-        console.log(chats);
         res.json(chats).status(200);
     }catch(err) {next(err)}
 })

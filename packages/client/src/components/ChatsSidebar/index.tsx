@@ -4,12 +4,18 @@ import { ChatItem, Chats, CreateNewChatButton, Wrapper } from './style';
 import * as faSolid from "@styled-icons/fa-solid";
 import { Margin } from 'components/shared/spacing';
 import CreateNewChatModal from 'components/CreateNewChatModal';
+import {useHistory} from "react-router-dom";
 
 const ChatSideBar = () => {
     
 
     const chats = useChats();
+    const history = useHistory();
 
+    const onClickChat = (chatId: string) => {
+        chats?.setCurrentChatMessages([]);
+        history.push(`/chats/${chatId}`);
+    }
 
     return (
         <Wrapper>
@@ -17,8 +23,8 @@ const ChatSideBar = () => {
             <Chats>
                 {chats?.chats.map(chat => (
                     <ChatItem 
-                        onClick={() => chats?.setCurrentChat({id: chat._id, messages: []})}
-                        isSelected={chat._id === chats?.currentChat?.id}
+                        onClick={() => onClickChat(chat._id)}
+                        isSelected={chat._id === chats?.currentChatId}
                     >
                         {chat.numOfNewMessages !== 0 && (
                             <div>new message</div>
@@ -32,7 +38,6 @@ const ChatSideBar = () => {
                 <Margin left={"1rem"} />
                 <faSolid.PlusSquare size={"1.2rem"}/>
             </CreateNewChatButton>
-          
         </Wrapper>
     )
 }
