@@ -33,12 +33,16 @@ interface IValue {
     setIsDrawCanvasOpen: React.Dispatch<React.SetStateAction<boolean>>;
 
     sendImageMesssage: ({ image, userId}: { image: string, userId: string}) => void;
+
+    isLoading: boolean;
+    setIsLoading: React.Dispatch<React.SetStateAction<boolean>>; 
 }
 
 
 export function ChatProvider({socket, children}: React.PropsWithChildren<{socket: SocketIOClient.Socket}>) { 
 
     const [chats, setChats, clearChats] = useSessionStorage<IChats>("chats", []);
+    const [isLoading, setIsLoading] = useState(false);
     const [isDrawCanvasOpen, setIsDrawCanvasOpen] = useState(false);
     
     //current chat
@@ -47,7 +51,7 @@ export function ChatProvider({socket, children}: React.PropsWithChildren<{socket
         currentChatMessages, 
         setCurrentChatMessages, 
         clearCurrentChatMessages
-    ] = useSessionStorage<IMessage[]>("current-chat-messages", []);
+    ] = useSessionStorage<IMessage[]>("current-chat-messages");
 
     const history = useHistory();
 
@@ -69,17 +73,24 @@ export function ChatProvider({socket, children}: React.PropsWithChildren<{socket
 
     //get messages for current chat
     useEffect(() => {
-        if (!currentChatId) return;
+        if (!currentChatId || currentChatId === "new") return;
+        setIsLoading(true);
+
         (async() => {
             try {
                 const res = await getChatMessagesById(currentChatId);
-                console.log({res})
                 if (res.data) setCurrentChatMessages(res.data);
+                
+                setTimeout(() => {
+                    setIsLoading(false);
+                }, 500)
+
             }catch(err) {
                 //error - probably miss typed chatId
                 history.push("/chats")
             }
         })();
+
     }, [currentChatId])
 
 
@@ -120,7 +131,9 @@ export function ChatProvider({socket, children}: React.PropsWithChildren<{socket
 
 
     const sendImageMesssage = ({image, userId}: {image: string, userId: string}) => {
+        
         socket.emit("send-message", {image, chatId: currentChatId})
+        
         addMessageToCurrentChat({from: userId, image})
     }
     
@@ -135,7 +148,9 @@ export function ChatProvider({socket, children}: React.PropsWithChildren<{socket
         clearCurrentChatMessages,
         setIsDrawCanvasOpen,
         isDrawCanvasOpen,
-        sendImageMesssage
+        sendImageMesssage,
+        isLoading,
+        setIsLoading
     }
     return (
         <ChatContext.Provider value={value}>

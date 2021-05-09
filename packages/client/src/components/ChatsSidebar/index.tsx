@@ -33,7 +33,7 @@ const ChatSideBar = () => {
                     </ChatItem>
                 ))}
             </Chats>
-            <CreateNewChatButton> 
+            <CreateNewChatButton onClick={() => history.push("/chats/new")}> 
                 Create new Chat
                 <Margin left={"1rem"} />
                 <faSolid.PlusSquare size={"1.2rem"}/>

@@ -29,11 +29,15 @@ const CurrentChat = ({match}: RouteComponentProps<{id: string}, any, {} | any>) 
     //chat id in url params => chats/1234
     useEffect(() => {   
         chats.setCurrentChatId(match.params.id);
+        chats.setCurrentChatMessages([]);
     }, [match.params.id])
     
     useEffect(() => {
         bottomRef?.current?.scrollIntoView({behavior: "smooth"})
     }, [chats.currentChatMessages])
+
+
+    if (chats.isLoading) return <div>loading...</div>
 
     return (
         <>
