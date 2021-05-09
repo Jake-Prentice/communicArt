@@ -13,6 +13,7 @@ export const Wrapper = styled.header`
     padding: 0.7rem 1.7rem;
     position: fixed;
     width: 100%;
+    z-index: 3;
     /* border-left: 10px solid purple; */
 `
 

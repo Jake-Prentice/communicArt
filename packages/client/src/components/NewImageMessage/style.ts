@@ -10,7 +10,6 @@ export const Wrapper = styled.div`
     background: white;
     display: flex;
     flex-direction: column;
-    border: 2px solid black;
     user-select: none;
 `
 
@@ -19,7 +18,7 @@ export const DrawCanvasSettings = styled.div`
     width: 100%;
     border-top: 2px solid black;
     display: flex;
-    padding: 0.6rem 0.8rem;
+    padding: 1rem 0.8rem;
 
     & > * {
         flex-basis: 100%;

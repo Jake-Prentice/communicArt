@@ -6,6 +6,20 @@ import { Margin } from 'components/shared/spacing';
 import { useChats } from 'contexts/ChatContext';
 import useUser from 'contexts/UserContext';
 
+const brushSizeOptions = [
+
+]
+
+
+interface IBrushSizeOption {
+    size: number;
+}
+
+const AdjustBrushSize = ({}: IBrushSizeOption[]) => {
+
+}
+
+
 const NewImageMessage = () => {
     
     const chats = useChats()!;
@@ -25,7 +39,7 @@ const NewImageMessage = () => {
     }   
     useEffect(() => {drawCanvas.initStyles({
         strokeStyle: currentColor,
-        lineWidth: 5
+        lineWidth: 0.1
     })}, [])
 
     useEffect(() => {
