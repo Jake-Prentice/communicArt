@@ -3,7 +3,7 @@ import { useChats } from 'contexts/ChatContext';
 import { ChatItem, Chats, CreateNewChatButton, Wrapper } from './style';
 import * as faSolid from "@styled-icons/fa-solid";
 import { Margin } from 'components/shared/spacing';
-import CreateNewChatModal from 'components/ChatSettingsModal';
+import CreateNewChatModal from 'components/ChatSettings';
 import {useHistory} from "react-router-dom";
 
 const ChatSideBar = () => {

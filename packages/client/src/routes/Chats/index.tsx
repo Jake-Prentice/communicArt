@@ -4,6 +4,7 @@ import CurrentChat from "components/CurrentChat";
 import { useChats } from "contexts/ChatContext";
 import { ChatLayout, ChatsWrapper } from "./style";
 import {Route} from "react-router-dom";
+import ChatSettings from "components/ChatSettings";
 
 const Chats = () => {
     const chats = useChats();
@@ -11,8 +12,8 @@ const Chats = () => {
         <ChatLayout>
             <ChatsWrapper>
                 <ChatSideBar />
-                {/* {chats?.currentChat && <CurrentChat />} */}
-                <Route path={"/chats/:id"} component={CurrentChat}/>
+                <Route exact path={"/chats/:id"} component={CurrentChat}/>
+                <Route exact path={"/chats/:id/settings"} component={ChatSettings}/>
             </ChatsWrapper>
         </ChatLayout>
     )

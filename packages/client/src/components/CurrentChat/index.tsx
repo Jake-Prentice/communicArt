@@ -15,7 +15,7 @@ import * as faRegular from "@styled-icons/fa-regular";
 import NewImageMessage from 'components/NewImageMessage';
 import { useChats } from 'contexts/ChatContext';
 import { Margin } from 'components/shared/spacing';
-import ChatSettingsModal from 'components/ChatSettingsModal';
+import ChatSettingsModal from 'components/ChatSettings';
 import { RouteComponentProps, Route, useHistory} from 'react-router';
 
 
@@ -31,7 +31,6 @@ const CurrentChat = ({match}: RouteComponentProps<{id: string}, any, {} | any>) 
     //chat id in url params => chats/1234
     useEffect(() => {   
         chats.setCurrentChatId(match.params.id);
-        chats.setCurrentChatMessages([]);
     }, [match.params.id])
     
     useEffect(() => {
@@ -67,9 +66,6 @@ const CurrentChat = ({match}: RouteComponentProps<{id: string}, any, {} | any>) 
                 </Footer>
             </Wrapper>
             {chats.isDrawCanvasOpen && <NewImageMessage />}
-            {/* {chatSettingsIsOpen && <CreateNewChatModal />} */}
-            <Route path={"/chats/:id/settings"} component={!chats.isLoading && ChatSettingsModal}/>
-
         </>
     )
 }

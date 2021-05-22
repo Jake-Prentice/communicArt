@@ -39,7 +39,7 @@ const NewImageMessage = () => {
     }   
     useEffect(() => {drawCanvas.initStyles({
         strokeStyle: currentColor,
-        lineWidth: 0.1
+        lineWidth: 1
     })}, [])
 
     useEffect(() => {

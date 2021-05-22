@@ -51,13 +51,13 @@ export function ChatProvider({socket, children}: React.PropsWithChildren<{socket
         currentChatMessages, 
         setCurrentChatMessages, 
         clearCurrentChatMessages
-    ] = useSessionStorage<IMessage[]>("current-chat-messages");
+    ] = useSessionStorage<IMessage[]>("current-chat-messages", []);
 
     const history = useHistory();
 
     //get chats
     useEffect(() => {
-        if (chats.length !== 0) return;
+        // if (chats.length !== 0) return;
         (async () => {
             try { 
                 const res = await getChats();
